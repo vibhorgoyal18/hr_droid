@@ -15,9 +15,16 @@ class CreateUserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
+    role = serializers.SerializerMethodField();
+
     class Meta:
         model = models.User
-        fields = ('email', 'first_name', 'last_name')
+        fields = ('id', 'email', 'first_name', 'last_name', 'role')
+
+    @staticmethod
+    def get_role(obj):
+        obj = models.UserDetails.objects.get(user=obj)
+        return obj.role.role
 
 
 class LoginSerializer(serializers.Serializer):
