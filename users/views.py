@@ -46,7 +46,7 @@ class CreateUserView(generics.CreateAPIView):
                 last_name=serializer.validated_data['last_name'],
                 employee_id=serializer.validated_data['employee_id'])
 
-        except Exception as exception:
+        except Exception:
             return JsonResponse({
                 'success': False,
                 'error': 'Error occurred in registering user!'
@@ -55,9 +55,7 @@ class CreateUserView(generics.CreateAPIView):
 
         return Response({
             'success': True,
-            'data': {
-                'message': 'User created successfully'
-            }
+            'data': None
         },
             status=status.HTTP_201_CREATED)
 
@@ -66,10 +64,17 @@ class GetSelfUserInfoView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        serializer = serializers.UserInfoSerializer(models.User.objects.filter(id=self.request.user.id), many=True)
-        return Response({
-            'success': True,
-            'data': serializer.data[0]
+        try:
+            serializer = serializers.UserInfoSerializer(models.User.objects.filter(id=self.request.user.id), many=True)
+            return Response({
+                'success': True,
+                'data': serializer.data[0]
 
-        },
-            status=status.HTTP_201_CREATED)
+            },
+                status=status.HTTP_200_OK)
+        except Exception:
+            return JsonResponse({
+                'success': False,
+                'error': 'Error occurred in getting user data!'
+            },
+                status=500)
