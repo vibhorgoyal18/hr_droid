@@ -1,4 +1,4 @@
-from users import serializers
+from users import serializers, models
 from django.http import JsonResponse
 from django.contrib.auth.hashers import make_password
 from rest_framework import generics
@@ -7,6 +7,25 @@ from rest_framework import status
 from rest_framework import permissions
 from mydesq_hr.permissions.admin_permissions import AdminPermissions
 from rest_framework_jwt.settings import api_settings
+
+
+class LoginView(generics.CreateAPIView):
+    serializer_class = serializers.LoginSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        payload = jwt_payload_handler(serializer.validated_data['user'])
+        token = jwt_encode_handler(payload)
+        return JsonResponse({
+            'message': 'success',
+            'data': {
+                'token': token
+            }
+        },
+            status=200)
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -24,7 +43,8 @@ class CreateUserView(generics.CreateAPIView):
                 email=serializer.validated_data['email'],
                 password=make_password(serializer.validated_data['password']),
                 first_name=serializer.validated_data['first_name'],
-                last_name=serializer.validated_data['last_name'], )
+                last_name=serializer.validated_data['last_name'],
+                employee_id=serializer.validated_data['employee_id'])
 
         except Exception as exception:
             return JsonResponse({
@@ -33,25 +53,23 @@ class CreateUserView(generics.CreateAPIView):
             },
                 status=500)
 
-        return Response({'success': True, 'data': {'message': 'User created successfully'}},
-                        status=status.HTTP_201_CREATED)
-
-
-class LoginView(generics.CreateAPIView):
-    serializer_class = serializers.LoginSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-        payload = jwt_payload_handler(serializer.validated_data['user'])
-        token = jwt_encode_handler(payload)
-        return JsonResponse({
-            'message': 'success',
+        return Response({
+            'success': True,
             'data': {
-                'token': token,
-                'user': serializers.UserInfoSerializer(serializer.validated_data['user']).data
+                'message': 'User created successfully'
             }
         },
-            status=200)
+            status=status.HTTP_201_CREATED)
+
+
+class GetSelfUserInfoView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        serializer = serializers.UserInfoSerializer(models.User.objects.filter(id=self.request.user.id), many=True)
+        return Response({
+            'success': True,
+            'data': serializer.data[0]
+
+        },
+            status=status.HTTP_201_CREATED)

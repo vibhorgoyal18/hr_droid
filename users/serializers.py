@@ -11,7 +11,7 @@ class CreateUserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ('email', 'password', 'first_name', 'last_name')
+        fields = ('email', 'password', 'first_name', 'last_name', 'employee_id')
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ('id', 'email', 'first_name', 'last_name', 'role')
+        fields = ('id', 'email', 'first_name', 'last_name', 'role', 'employee_id')
 
     @staticmethod
     def get_role(obj):
