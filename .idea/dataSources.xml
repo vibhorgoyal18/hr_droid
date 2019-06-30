@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Django default" uuid="542aefd7-8538-436b-8c8c-c66fc4011be7">
+    <data-source source="LOCAL" name="mydesq_hr@202.182.120.148" uuid="296d3c8a-e6b0-40ba-9ceb-66826c990b0c">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>$PROJECT_DIR$/mydesq_hr/settings.py</remarks>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://127.0.0.1:5432/mydesq_hr</jdbc-url>
+      <jdbc-url>jdbc:postgresql://202.182.120.148:5432/mydesq_hr</jdbc-url>
     </data-source>
   </component>
 </project>

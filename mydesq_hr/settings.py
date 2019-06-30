@@ -25,7 +25,7 @@ SECRET_KEY = 'w1!u#x=_si+m&)5y(^ar(!zn%&)836-+3ipsvw*7%q8#k0(m1b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', '202.182.120.148']
 
 # Application definition
 
@@ -83,9 +83,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'mydesq_hr',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
+        'USER': 'mydhr',
+        'PASSWORD': 'mydhr',
+        'HOST': '202.182.120.148',
         'PORT': '',
     }
 }
