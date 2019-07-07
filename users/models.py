@@ -7,14 +7,25 @@ from django.utils.translation import ugettext_lazy as _
 from .managers import UserManager
 
 
+class UserRoles(models.Model):
+    role = models.CharField(max_length=50, blank=False)
+    level = models.IntegerField(blank=False)
+
+    class Meta:
+        verbose_name = _('user_roles')
+        verbose_name_plural = _('users_roles')
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
-    employee_id = models.IntegerField(null=False)
+    employee_id = models.IntegerField(null=False, unique=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff'), default=True)
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
+    role = models.ForeignKey(UserRoles, related_name='user_role', on_delete=False, blank=True, null=True)
+    designation = models.CharField(max_length=100, blank=True, null=True)
 
     objects = UserManager()
 
@@ -25,22 +36,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _('users')
 
 
-class UserRoles(models.Model):
-    role = models.CharField(max_length=50, blank=False)
-    level = models.IntegerField(blank=False)
-
-    class Meta:
-        verbose_name = _('user_roles')
-        verbose_name_plural = _('users_roles')
-
-
-class BankDetails(models.Model):
+class AccountDetails(models.Model):
     user = models.OneToOneField(
         User,
         related_name='bank_user',
         on_delete=models.CASCADE,
         primary_key=True,
     )
+    account_name = models.CharField(max_length=100, null=False)
     account_number = models.CharField(max_length=20, blank=False)
     ifsc = models.CharField(max_length=20, blank=False)
     bank_name = models.CharField(max_length=40, blank=False)
@@ -52,7 +55,6 @@ class BankDetails(models.Model):
 
 
 class UserAddress(models.Model):
-
     user = models.ForeignKey(User, related_name='address_user', on_delete=models.CASCADE)
     address_type = models.CharField(max_length=11,
                                     choices=(
@@ -80,8 +82,6 @@ class UserDetails(models.Model):
         primary_key=True,
     )
 
-    designation = models.CharField(max_length=100, blank=False)
-    role = models.ForeignKey(UserRoles, related_name='user_role', on_delete=False, blank=True)
     reporting_manager = models.ForeignKey(User, related_name='reporting_manager', on_delete=False)
     contact = models.CharField(max_length=20, blank=True)
     emergency_contact = models.CharField(max_length=20, blank=True)
@@ -93,5 +93,3 @@ class UserDetails(models.Model):
     class Meta:
         verbose_name = _('user_detail')
         verbose_name_plural = _('users_details')
-
-
